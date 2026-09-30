@@ -1,0 +1,42 @@
+<% if professor.errors.any? %>
+  <div class="mb-5 rounded-md border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
+    <strong>Revise os dados:</strong> <%= professor.errors.full_messages.to_sentence %>
+  </div>
+<% end %>
+
+<%= form_with model: professor, class: "grid gap-5" do |form| %>
+  <div class="grid gap-4 md:grid-cols-2">
+    <div>
+      <%= form.label :name, "Nome", class: "block text-sm font-medium text-slate-700" %>
+      <%= form.text_field :name, class: "mt-1 w-full rounded-md border-slate-300 shadow-sm focus:border-teal-600 focus:ring-teal-600" %>
+    </div>
+    <div>
+      <%= form.label :email, "E-mail", class: "block text-sm font-medium text-slate-700" %>
+      <%= form.email_field :email, class: "mt-1 w-full rounded-md border-slate-300 shadow-sm focus:border-teal-600 focus:ring-teal-600" %>
+    </div>
+    <div>
+      <%= form.label :crp, "CRP", class: "block text-sm font-medium text-slate-700" %>
+      <%= form.text_field :crp, class: "mt-1 w-full rounded-md border-slate-300 shadow-sm focus:border-teal-600 focus:ring-teal-600" %>
+    </div>
+    <div>
+      <%= form.label :specialty, "Especialidade", class: "block text-sm font-medium text-slate-700" %>
+      <%= form.text_field :specialty, class: "mt-1 w-full rounded-md border-slate-300 shadow-sm focus:border-teal-600 focus:ring-teal-600" %>
+    </div>
+    <div>
+      <%= form.label :password, professor.persisted? ? "Nova senha" : "Senha temporária", class: "block text-sm font-medium text-slate-700" %>
+      <%= form.password_field :password, autocomplete: "new-password", class: "mt-1 w-full rounded-md border-slate-300 shadow-sm focus:border-teal-600 focus:ring-teal-600" %>
+    </div>
+    <div>
+      <%= form.label :password_confirmation, "Confirmação da senha", class: "block text-sm font-medium text-slate-700" %>
+      <%= form.password_field :password_confirmation, autocomplete: "new-password", class: "mt-1 w-full rounded-md border-slate-300 shadow-sm focus:border-teal-600 focus:ring-teal-600" %>
+    </div>
+  </div>
+  <label class="flex items-center gap-2 text-sm font-medium text-slate-700">
+    <%= form.check_box :active, class: "rounded border-slate-300 text-teal-700 focus:ring-teal-600" %>
+    Professor ativo
+  </label>
+  <div class="flex gap-3">
+    <%= form.submit "Salvar professor", class: "rounded-md bg-teal-700 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-800" %>
+    <%= link_to "Cancelar", professores_path, class: "rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50" %>
+  </div>
+<% end %>

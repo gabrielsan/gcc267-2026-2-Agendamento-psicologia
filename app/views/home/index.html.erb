@@ -1,0 +1,30 @@
+<section class="mx-auto grid min-h-[calc(100vh-3rem)] max-w-6xl content-center gap-10 py-10">
+  <div class="max-w-3xl">
+    <p class="text-sm font-semibold uppercase tracking-[0.18em] text-teal-700">Unilavras</p>
+    <h1 class="mt-4 text-4xl font-semibold tracking-normal text-slate-950 sm:text-5xl">Agendamento de Consultas Psicológicas</h1>
+    <p class="mt-4 text-lg leading-8 text-slate-600">Acesse o ambiente correto para acompanhar a rotina da clínica-escola: supervisão docente, agenda dos estagiários e administração acadêmica.</p>
+  </div>
+
+  <div class="grid gap-4 md:grid-cols-3">
+    <%= link_to new_professor_session_path, class: "rounded-md border border-slate-200 bg-white p-6 shadow-sm transition hover:border-teal-300 hover:shadow-md" do %>
+      <div class="flex h-11 w-11 items-center justify-center rounded-md bg-teal-50 text-lg font-semibold text-teal-800">P</div>
+      <h2 class="mt-5 text-xl font-semibold text-slate-950">Professor</h2>
+      <p class="mt-2 text-sm leading-6 text-slate-600">Veja sua agenda de supervisões e os atendimentos vinculados a você.</p>
+      <div class="mt-6 text-sm font-semibold text-teal-700">Entrar como professor</div>
+    <% end %>
+
+    <%= link_to new_estagiario_session_path, class: "rounded-md border border-slate-200 bg-white p-6 shadow-sm transition hover:border-teal-300 hover:shadow-md" do %>
+      <div class="flex h-11 w-11 items-center justify-center rounded-md bg-cyan-50 text-lg font-semibold text-cyan-800">E</div>
+      <h2 class="mt-5 text-xl font-semibold text-slate-950">Estudante</h2>
+      <p class="mt-2 text-sm leading-6 text-slate-600">Crie e edite suas consultas, acompanhando horários e supervisores disponíveis.</p>
+      <div class="mt-6 text-sm font-semibold text-teal-700">Entrar como estudante</div>
+    <% end %>
+
+    <%= link_to new_admin_session_path, class: "rounded-md border border-slate-200 bg-white p-6 shadow-sm transition hover:border-teal-300 hover:shadow-md" do %>
+      <div class="flex h-11 w-11 items-center justify-center rounded-md bg-slate-100 text-lg font-semibold text-slate-800">A</div>
+      <h2 class="mt-5 text-xl font-semibold text-slate-950">Admin</h2>
+      <p class="mt-2 text-sm leading-6 text-slate-600">Gerencie professores, visualize a agenda geral e remova registros quando necessário.</p>
+      <div class="mt-6 text-sm font-semibold text-teal-700">Entrar como admin</div>
+    <% end %>
+  </div>
+</section>
