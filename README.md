@@ -1,6 +1,8 @@
 # Agendamento de Consultas Psicológicas - Unilavras
 
-Aplicação Rails para gestão de consultas psicológicas da clínica-escola Unilavras, com autenticação por administradores, professores e estagiários, agenda de consultas, professores supervisores e validação de conflitos de horário.
+Base inicial em Rails para o sistema de agendamento da clínica-escola de Psicologia da Unilavras.
+
+Este repositório está propositalmente só com a estrutura inicial da aplicação: Rails, PostgreSQL via Docker Compose, Hotwire/Tailwind, Devise, RSpec/Factory Bot/Shoulda e Annotate configurado para anotar apenas models. As entidades, regras de negócio, telas e testes do domínio serão implementados pela equipe.
 
 ## Stack
 
@@ -9,7 +11,8 @@ Aplicação Rails para gestão de consultas psicológicas da clínica-escola Uni
 - PostgreSQL
 - Hotwire + Tailwind CSS
 - Devise
-- RSpec + Factory Bot
+- RSpec + Factory Bot + Shoulda Matchers
+- Annotate, somente para models
 - Docker Compose
 
 ## Rodando com Docker
@@ -20,11 +23,13 @@ docker compose up --build
 
 A aplicação ficará em `http://localhost:3000`.
 
-Usuários de seed:
+## Banco de dados
 
-- Admin: `admin@unilavras.edu.br` / `password123`
-- Estagiário: `estagiario@unilavras.edu.br` / `password123`
-- Professor: `helena.martins@unilavras.edu.br` / `password123`
+O PostgreSQL roda no serviço `db` do Docker Compose. Para preparar o banco manualmente:
+
+```bash
+docker compose run --rm web bin/rails db:prepare
+```
 
 ## Testes
 
@@ -38,11 +43,20 @@ Ou dentro do Docker:
 docker compose run --rm web bundle exec rspec
 ```
 
-## Regras atuais
+## Annotate
 
-- Admin cria, edita e exclui professores.
-- Admin pode excluir consultas e visualizar a agenda completa.
-- Professor visualiza apenas as consultas em que atua como supervisor.
-- Estagiário cria e edita apenas suas próprias consultas.
-- Consultas não podem sobrepor horários do mesmo estagiário ou professor.
-- Consultas presenciais exigem sala.
+A gem `annotate` está instalada no grupo de desenvolvimento e configurada em `lib/tasks/auto_annotate_models.rake` para anotar apenas arquivos em `app/models`.
+
+Uso manual:
+
+```bash
+bundle exec annotate --models
+```
+
+## Próximos passos sugeridos
+
+- Criar as entidades do domínio: administradores, professores, estagiários e consultas.
+- Definir regras de autorização por perfil.
+- Implementar services para regras de agendamento e conflitos de horário.
+- Construir as telas com Hotwire/Turbo e Tailwind.
+- Cobrir models, services e requests com RSpec.

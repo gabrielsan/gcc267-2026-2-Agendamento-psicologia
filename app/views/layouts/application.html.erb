@@ -11,49 +11,8 @@
   </head>
 
   <body class="min-h-screen bg-slate-50 text-slate-900 antialiased">
-    <div class="min-h-screen lg:flex">
-      <% if current_actor.present? %>
-        <aside class="border-b border-slate-200 bg-white lg:fixed lg:inset-y-0 lg:w-72 lg:border-b-0 lg:border-r">
-          <div class="flex h-full flex-col gap-8 px-6 py-6">
-            <%= link_to dashboard_path, class: "group" do %>
-              <div class="text-xs font-semibold uppercase tracking-[0.18em] text-teal-700">Unilavras</div>
-              <div class="mt-2 text-xl font-semibold leading-tight text-slate-950">Clínica Escola de Psicologia</div>
-            <% end %>
-
-            <nav class="grid gap-2 text-sm font-medium text-slate-600">
-              <%= link_to "Painel", dashboard_path, class: "rounded-md px-3 py-2 hover:bg-teal-50 hover:text-teal-800 #{'bg-teal-50 text-teal-800' if current_page?(dashboard_path)}" %>
-              <%= link_to "Consultas", consultas_path, class: "rounded-md px-3 py-2 hover:bg-teal-50 hover:text-teal-800 #{'bg-teal-50 text-teal-800' if controller_name == 'consultas'}" %>
-              <%= link_to "Professores", professores_path, class: "rounded-md px-3 py-2 hover:bg-teal-50 hover:text-teal-800 #{'bg-teal-50 text-teal-800' if controller_name == 'professores'}" %>
-            </nav>
-
-            <div class="mt-auto rounded-md border border-slate-200 bg-slate-50 p-4 text-sm">
-              <div class="font-semibold text-slate-900"><%= current_actor.name %></div>
-              <div class="mt-1 text-slate-500"><%= current_actor_role %></div>
-              <div class="mt-4 flex gap-2">
-                <% if admin_actor? %>
-                  <%= button_to "Sair", destroy_admin_session_path, method: :delete, class: "text-sm font-semibold text-slate-600 hover:text-slate-950" %>
-                <% elsif estagiario_actor? %>
-                  <%= button_to "Sair", destroy_estagiario_session_path, method: :delete, class: "text-sm font-semibold text-slate-600 hover:text-slate-950" %>
-                <% elsif professor_actor? %>
-                  <%= button_to "Sair", destroy_professor_session_path, method: :delete, class: "text-sm font-semibold text-slate-600 hover:text-slate-950" %>
-                <% end %>
-              </div>
-            </div>
-          </div>
-        </aside>
-      <% end %>
-
-      <main class="w-full <%= 'lg:pl-72' if current_actor.present? %>">
-        <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-          <% if notice.present? %>
-            <div class="mb-5 rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800"><%= notice %></div>
-          <% end %>
-          <% if alert.present? %>
-            <div class="mb-5 rounded-md border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-800"><%= alert %></div>
-          <% end %>
-          <%= yield %>
-        </div>
-      </main>
-    </div>
+    <main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <%= yield %>
+    </main>
   </body>
 </html>

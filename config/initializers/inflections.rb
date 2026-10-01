@@ -1,4 +1,3 @@
 ActiveSupport::Inflector.inflections(:en) do |inflect|
-  inflect.irregular "consulta", "consultas"
-  inflect.irregular "professor", "professores"
+  # Configure inflections do domínio aqui quando as entidades forem criadas.
 end
