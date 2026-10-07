@@ -2,6 +2,10 @@
 #   docker compose run --rm api bin/rails db:seed
 #
 # Todos os usuários usam a senha "senha123".
+
+# Os testes criam os próprios dados; seeds no banco de teste quebram as specs.
+return if Rails.env.test?
+
 SENHA = "senha123".freeze
 
 def usuario!(classe, email, **atributos)

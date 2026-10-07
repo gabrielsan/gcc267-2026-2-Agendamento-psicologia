@@ -40,7 +40,7 @@ curl -i -X POST http://localhost:3000/api/v1/login \
 
 | O quê | Comando |
 |---|---|
-| Testes | `docker compose run --rm -e RAILS_ENV=test api bash -c "bin/rails db:prepare && bundle exec rspec"` |
+| Testes | `docker compose run --rm -e RAILS_ENV=test api bash -c "bin/rails db:create db:schema:load && bundle exec rspec"` |
 | Lint | `docker compose run --rm api bin/rubocop` |
 | Segurança | `docker compose run --rm api bin/brakeman` |
 | Console | `docker compose run --rm api bin/rails console` |
