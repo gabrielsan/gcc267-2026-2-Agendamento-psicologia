@@ -1,0 +1,71 @@
+pt-BR:
+  activerecord:
+    models:
+      usuario:
+        one: Usuário
+        other: Usuários
+      admin:
+        one: Administrador
+        other: Administradores
+      professor:
+        one: Professor
+        other: Professores
+      estagiario:
+        one: Estagiário
+        other: Estagiários
+      consulta:
+        one: Consulta
+        other: Consultas
+    attributes:
+      usuario: &usuario
+        nome: Nome
+        email: E-mail
+        password: Senha
+        matricula: Matrícula
+        telefone: Telefone
+        ativo: Ativo
+        type: Tipo
+        supervisor: Supervisor
+        supervisor_id: Supervisor
+      admin: *usuario
+      professor: *usuario
+      estagiario: *usuario
+      consulta:
+        estagiario: Estagiário
+        estagiario_id: Estagiário
+        professor: Professor supervisor
+        professor_id: Professor supervisor
+        paciente_nome: Nome do paciente
+        paciente_telefone: Telefone do paciente
+        paciente_email: E-mail do paciente
+        inicio: Início
+        fim: Fim
+        sala: Sala
+        status: Status
+        observacoes: Observações
+    errors:
+      messages:
+        restrict_dependent_destroy:
+          has_one: "Não é possível excluir o registro pois existe um(a) %{record} dependente"
+          has_many: "Não é possível excluir o registro pois existem %{record} dependentes"
+      models:
+        consulta:
+          attributes:
+            fim:
+              depois_do_inicio: "deve ser depois do início"
+            inicio:
+              no_passado: "não pode ser no passado"
+              antes_de_concluir: "precisa já ter passado para marcar a consulta como %{status}"
+            base:
+              duracao_invalida: "A consulta deve durar entre %{minimo} e %{maximo} minutos"
+            status:
+              transicao_invalida: "não pode mudar de %{de} para %{para}"
+            professor:
+              nao_e_supervisor: "deve ser o supervisor do estagiário"
+  devise:
+    failure:
+      inactive: "Sua conta está inativa. Procure a administração."
+      inativo: "Sua conta está inativa. Procure a administração."
+      invalid: "E-mail ou senha inválidos."
+      unauthenticated: "Você precisa fazer login para continuar."
+      revoked_token: "Sessão encerrada. Faça login novamente."

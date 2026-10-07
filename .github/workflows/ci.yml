@@ -2,15 +2,64 @@ name: CI Pipeline
 
 on:
   push:
-    branches: [ "main", "desafio-*" ]
+    branches: [ "main", "desafio-*", "feat/*" ]
   pull_request:
     branches: [ "main" ]
 
 jobs:
-  build-and-lint:
+  lint-e-seguranca:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Run CI Validation Check
-        run: echo "Pipeline de CI iniciada e validada com sucesso!"
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Brakeman
+        # A integração mantém o runtime existente; atualizar Ruby/Rails é uma tarefa separada.
+        run: bundle exec brakeman --no-pager --except EOLRuby,EOLRails
+
+  testes:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      RAILS_ENV: test
+      CI: "true"
+      DATABASE_HOST: localhost
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: postgres
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Preparar banco
+        run: bin/rails db:prepare
+
+      - name: Autoload
+        run: bin/rails zeitwerk:check
+
+      - name: RSpec
+        run: bundle exec rspec
+
+      - name: Tailwind
+        run: bin/rails tailwindcss:build
