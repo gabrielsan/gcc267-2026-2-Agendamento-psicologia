@@ -12,6 +12,10 @@ gem "stimulus-rails"
 gem "tailwindcss-rails"
 gem "jbuilder"
 gem "devise"
+gem "devise-jwt", "~> 0.12"
+gem "pundit", "~> 2.4"
+gem "pagy", "~> 9.3"
+gem "rails-i18n", "~> 7.0"
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 gem "bootsnap", require: false
 
@@ -20,6 +24,8 @@ group :development, :test do
   gem "factory_bot_rails"
   gem "rspec-rails"
   gem "shoulda-matchers"
+  gem "faker"
+  gem "brakeman", require: false
 end
 
 group :development do

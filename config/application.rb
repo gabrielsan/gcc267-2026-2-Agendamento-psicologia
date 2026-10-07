@@ -33,10 +33,13 @@ module Gcc26720262AgendamentoPsicologia
     # These settings can be overridden in specific environments using the files
     # in config/environments, which are processed later.
     #
-    # config.time_zone = "Central Time (US & Canada)"
+    config.time_zone = "America/Sao_Paulo"
+    config.i18n.default_locale = :"pt-BR"
+    config.i18n.available_locales = [:"pt-BR", :en]
     # config.eager_load_paths << Rails.root.join("extras")
 
     # Don't generate system test files.
     config.generators.system_tests = nil
+    config.generators.test_framework :rspec
   end
 end

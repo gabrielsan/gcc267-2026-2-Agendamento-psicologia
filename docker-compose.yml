@@ -4,13 +4,13 @@ services:
     environment:
       POSTGRES_USER: agendamento_psicologia
       POSTGRES_PASSWORD: agendamento_psicologia
-      POSTGRES_DB: agendamento_psicologia_development
+      POSTGRES_DB: ${DATABASE_NAME:-agendamento_psicologia_unificada_development}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U agendamento_psicologia -d agendamento_psicologia_development"]
+      test: ["CMD-SHELL", "pg_isready -U agendamento_psicologia"]
       interval: 2s
       timeout: 3s
       retries: 30
@@ -31,7 +31,8 @@ services:
       DATABASE_HOST: db
       DATABASE_USER: agendamento_psicologia
       DATABASE_PASSWORD: agendamento_psicologia
-      DATABASE_NAME: agendamento_psicologia_development
+      DATABASE_NAME: ${DATABASE_NAME:-agendamento_psicologia_unificada_development}
+      DATABASE_TEST_NAME: ${DATABASE_TEST_NAME:-agendamento_psicologia_unificada_test}
     command: >
       bash -lc "bundle install && rm -f tmp/pids/server.pid && bin/rails db:prepare db:seed && bin/rails tailwindcss:build && bin/rails server -b 0.0.0.0 -p 3000"
 
