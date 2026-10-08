@@ -1,18 +1,42 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
   <head>
-    <title>Agendamento de Consultas Psicológicas - Unilavras</title>
+    <title><%= content_for?(:title) ? yield(:title) + " · " : "" %>Clínica-escola · Unilavras</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
+    <% if usuario_signed_in? %><meta name="turbo-cache-control" content="no-cache"><% end %>
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="min-h-screen bg-slate-50 text-slate-900 antialiased">
-    <main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+  <body class="min-h-screen antialiased" data-controller="menu" data-action="keydown.esc->menu#close turbo:before-cache->menu#close">
+    <a href="#conteudo" class="skip-link">Pular para o conteúdo</a>
+    <% if usuario_signed_in? %>
+      <aside class="sidebar">
+        <%= link_to painel_path, class: "brand" do %><span class="brand-mark">ψ</span><span>Clínica-escola<small>UNILAVRAS · PSICOLOGIA</small></span><% end %>
+        <button type="button" class="menu-button" data-menu-target="button" data-action="menu#toggle" aria-expanded="false" aria-controls="navegacao" aria-label="Abrir menu"><%= icone("menu") %></button>
+        <div id="navegacao" class="sidebar-content" data-menu-target="panel">
+          <p class="nav-caption">ESPAÇO DE <%= perfil_nome.upcase %></p>
+          <nav aria-label="Navegação principal">
+            <%= link_to painel_path, class: "nav-link #{'active' if controller_name == 'painel'}", aria: { current: ("page" if controller_name == 'painel') } do %><%= icone("painel") %> Visão geral<% end %>
+            <%= link_to consultas_path, class: "nav-link #{'active' if controller_name == 'consultas'}", aria: { current: ("page" if controller_name == 'consultas') } do %><%= icone("agenda") %> Consultas<% end %>
+            <% if current_usuario.admin? %><%= link_to professores_path, class: "nav-link #{'active' if controller_name == 'professores'}", aria: { current: ("page" if controller_name == 'professores') } do %><%= icone("pessoas") %> Professores<% end %><% end %>
+          </nav>
+          <div class="sidebar-note"><%= icone("escudo") %><p>Cuidado começa com organização.<span>Acesse apenas os dados necessários ao atendimento.</span></p></div>
+          <div class="user-block"><span class="avatar"><%= iniciais(current_usuario.nome) %></span><div><strong><%= current_usuario.nome %></strong><small><%= perfil_nome %></small></div></div>
+          <%= button_to destroy_usuario_session_path, method: :delete, class: "nav-link logout" do %><%= icone("sair") %> Sair da conta<% end %>
+        </div>
+      </aside>
+    <% end %>
+    <main id="conteudo" class="<%= usuario_signed_in? ? 'workspace' : 'public-page' %>" tabindex="-1">
+      <%= render "shared/flash" %>
       <%= yield %>
     </main>
+    <dialog id="confirmacao" class="confirmation-dialog" aria-labelledby="confirmacao-titulo">
+      <h2 id="confirmacao-titulo">Confirmar exclusão</h2><p id="confirmacao-mensagem"></p>
+      <form method="dialog" class="form-actions"><button value="cancel" class="btn btn-secondary" autofocus>Cancelar</button><button value="confirm" class="btn btn-danger">Confirmar exclusão</button></form>
+    </dialog>
   </body>
 </html>

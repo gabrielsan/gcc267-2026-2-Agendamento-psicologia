@@ -1,0 +1,2 @@
+<% content_for :title, "Editar consulta" %>
+<%= link_to "← Voltar à consulta", consulta_path(@consulta), class: "back-link" %><header class="page-header"><div><span class="eyebrow">ACOMPANHAMENTO</span><h1>Editar consulta</h1><p><%= @consulta.paciente_nome %></p></div></header><%= render "form" %>

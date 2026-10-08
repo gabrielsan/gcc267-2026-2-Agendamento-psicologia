@@ -21,7 +21,7 @@ docker compose up --build
 
 A aplicação ficará em `http://localhost:3000`.
 
-O serviço `web` prepara o banco, carrega os seeds e compila o Tailwind antes de iniciar. A API está em `/api/v1` e a verificação de saúde em `/up`. As telas Hotwire ainda serão implementadas nesta mesma aplicação.
+O serviço `web` prepara o banco, carrega os seeds e compila o Tailwind antes de iniciar. A home oferece os acessos Professor, Estudante e Admin. A API está em `/api/v1` e a verificação de saúde em `/up`.
 
 ## Acessos de desenvolvimento
 
@@ -36,7 +36,7 @@ Todos os usuários dos seeds usam a senha `senha123`:
 | Estagiário | `pedro.estagiario@unilavras.edu.br` |
 | Estagiário | `julia.estagiaria@unilavras.edu.br` |
 
-O login atual é pela API:
+Na interface, selecione um perfil e entre com uma conta acima. O perfil real da conta determina as permissões; Estudante corresponde a Estagiario no domínio. O login web usa sessão Devise com proteção CSRF. A API permanece acessível com JWT:
 
 ```bash
 curl -i -X POST http://localhost:3000/api/v1/login \
@@ -85,7 +85,9 @@ bundle exec annotate --models
 - `app/services/consultas`: agendamento, atualização, disponibilidade e conflitos.
 - `app/policies`: permissões e visibilidade por perfil.
 - `app/controllers/api/v1` e `app/serializers`: endpoints e respostas JSON.
-- `app/controllers/application_controller.rb` e `app/views`: base HTML para Hotwire, separada dos controllers da API.
+- `app/controllers/application_controller.rb`, controllers HTML e `app/views`: home, login, dashboards e CRUD com Hotwire, separados da API.
+- `app/javascript`: Turbo e menu móvel Stimulus, servidos localmente via importmap.
+- `app/assets/tailwind/application.css`: componentes e layout responsivo.
 - `spec`: testes de models, services, policies e requests.
 
 Só o admin cria professores e exclui registros. Professores acompanham seus supervisionados; estagiários criam e editam suas consultas em aberto. Usuários com vínculos não podem ser excluídos e podem ser desativados pelo admin. Conflitos de agenda são verificados pelos services e por constraints do PostgreSQL.
@@ -108,6 +110,15 @@ Só o admin cria professores e exclui registros. Professores acompanham seus sup
 | `JWT_EXPIRATION_MINUTES` | `480` |
 | `SECRET_KEY_BASE` | Configure em produção |
 
-## Próximos passos
+## Frontend e demonstração
 
-Construir a home de escolha de perfil e as telas de admin, professor e estudante com Hotwire/Tailwind, reutilizando os models, services e policies. A autenticação HTML por sessão deverá ser integrada ao Devise com proteção CSRF; os endpoints da API usam JWT.
+- Home com escolha de perfil, login e logout.
+- Dashboards com indicadores e agenda no escopo autorizado.
+- Consultas com busca, filtro por data/status, paginação, detalhes e formulários por perfil.
+- Professores com CRUD administrativo, busca, ativação/desativação e erros de vínculo.
+- Turbo Frames nos filtros, confirmação de exclusão, erros preservando campos, estados vazios e menu móvel.
+- [Guia e roteiro de vitrine](docs/frontend.md).
+- [ADR 0003: sessão HTML e JWT](docs/adr/0003-frontend-hotwire.md).
+- [Descrição da entrega do frontend](docs/pr-frontend.md).
+
+Os testes de fluxo HTML estão em `spec/features/frontend_spec.rb`; autenticação, CSRF e isolamento por perfil em `spec/requests/web_spec.rb`. O roteiro Chromium opcional está em `script/browser_smoke.cjs`.

@@ -1,0 +1,5 @@
+<div id="mensagens" aria-live="polite">
+  <% flash.each do |tipo, mensagem| %>
+    <div class="flash <%= tipo == 'notice' ? 'flash-success' : 'flash-error' %>" role="<%= tipo == 'notice' ? 'status' : 'alert' %>"><%= mensagem %></div>
+  <% end %>
+</div>
