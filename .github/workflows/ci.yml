@@ -4,7 +4,7 @@ on:
   push:
     branches: [ "main", "desafio-*", "feat/*" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "desafio-*" ]
 
 jobs:
   lint-e-seguranca:

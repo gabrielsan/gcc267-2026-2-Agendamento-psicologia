@@ -2,7 +2,14 @@ Rails.application.routes.draw do
   # Reveal health status on /up that returns 200 if the app boots with no exceptions.
   get "up" => "rails/health#show", as: :rails_health_check
 
-  devise_for :usuarios, skip: :all
+  devise_for :usuarios, only: :sessions, path: "",
+    path_names: { sign_in: "entrar", sign_out: "sair" },
+    controllers: { sessions: "usuarios/sessions" }
+
+  root "home#index"
+  get "painel", to: "painel#index"
+  resources :consultas
+  resources :professores
 
   namespace :api do
     namespace :v1 do
@@ -17,6 +24,4 @@ Rails.application.routes.draw do
     end
   end
 
-  # Root route to be defined by the team.
-  # root "home#index"
 end

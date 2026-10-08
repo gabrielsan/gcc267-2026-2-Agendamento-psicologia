@@ -1,0 +1,1 @@
+<% content_for :title, "Editar professor" %><%= link_to "← Voltar ao cadastro", professor_path(@professor), class: "back-link" %><header class="page-header"><div><span class="eyebrow">EQUIPE DA CLÍNICA</span><h1>Editar professor</h1><p>Atualize os dados de <%= @professor.nome %>.</p></div></header><%= render "form" %>

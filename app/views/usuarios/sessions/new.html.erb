@@ -1,0 +1,12 @@
+<% content_for :title, "Entrar" %>
+<header class="public-header"><%= link_to root_path, class: "brand" do %><span class="brand-mark">ψ</span><span>Clínica-escola<small>UNILAVRAS · PSICOLOGIA</small></span><% end %><%= link_to "← Voltar ao início", root_path, class: "text-link" %></header>
+<div class="login-grid"><section class="login-intro"><span class="eyebrow">BEM-VINDO AO SEU ESPAÇO</span><h1>O cuidado continua<br>por aqui.</h1><p>Acesse sua agenda e tenha mais tranquilidade para se dedicar ao que importa.</p><div class="login-note"><%= icone("escudo") %><span>Seus acessos são definidos pela equipe da clínica. Precisa de ajuda? Procure a administração.</span></div></section>
+  <section class="panel login-panel"><span class="profile-icon"><%= icone(@perfil == "admin" ? "escudo" : "pessoas") %></span><h2><%= @perfil ? "Acesso de #{perfil_nome(@perfil)}" : "Acesse sua conta" %></h2><p class="muted">Informe seu e-mail e sua senha para continuar.</p>
+    <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "form-stack" }) do |f| %>
+      <%= hidden_field_tag :perfil, @perfil if @perfil %>
+      <div class="field"><%= f.label :email, "E-mail" %><%= f.email_field :email, autofocus: true, autocomplete: "username", required: true, placeholder: "seu.email@unilavras.edu.br" %></div>
+      <div class="field"><%= f.label :password, "Senha" %><%= f.password_field :password, autocomplete: "current-password", required: true %></div>
+      <%= f.submit "Entrar", class: "btn btn-primary w-full", data: { turbo_submits_with: "Entrando…" } %>
+    <% end %><p class="form-hint">Seu perfil será identificado pela conta cadastrada.</p>
+  </section>
+</div>

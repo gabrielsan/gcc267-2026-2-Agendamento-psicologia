@@ -63,7 +63,13 @@ pt-BR:
             professor:
               nao_e_supervisor: "deve ser o supervisor do estagiário"
   devise:
+    sessions:
+      signed_in: "Login realizado com sucesso."
+      signed_out: "Você saiu da sua conta."
+      already_signed_out: "Você saiu da sua conta."
     failure:
+      already_authenticated: "Você já está conectado."
+      not_found_in_database: "E-mail ou senha inválidos."
       inactive: "Sua conta está inativa. Procure a administração."
       inativo: "Sua conta está inativa. Procure a administração."
       invalid: "E-mail ou senha inválidos."
