@@ -1,0 +1,2 @@
+<% content_for :title, @titulo_erro %>
+<section class="panel error-page"><%= icone("escudo", classe: "large-icon") %><h1><%= @titulo_erro %></h1><p><%= @mensagem_erro %></p><%= link_to "Voltar ao painel", painel_path, class: "btn btn-primary", data: { turbo_frame: "_top" } %></section>

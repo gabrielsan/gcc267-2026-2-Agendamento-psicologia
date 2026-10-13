@@ -1,0 +1,5 @@
+<div class="pagination"><span><%= @total %> <%= @total == 1 ? 'registro' : 'registros' %></span><nav aria-label="Paginação">
+  <% if @pagina > 1 %><%= link_to "Anterior", url_for(request.query_parameters.merge(pagina: @pagina - 1)), class: "btn btn-secondary" %><% end %>
+  <span>Página <%= @pagina %> de <%= @paginas %></span>
+  <% if @pagina < @paginas %><%= link_to "Próxima", url_for(request.query_parameters.merge(pagina: @pagina + 1)), class: "btn btn-secondary" %><% end %>
+</nav></div>

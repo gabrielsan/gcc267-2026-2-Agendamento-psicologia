@@ -1,0 +1,14 @@
+<% content_for :title, "Bem-vindo" %>
+<header class="public-header"><%= link_to root_path, class: "brand" do %><span class="brand-mark">ψ</span><span>Clínica-escola<small>UNILAVRAS · PSICOLOGIA</small></span><% end %><span class="header-label">ESPAÇO DE CUIDADO E APRENDIZAGEM</span></header>
+<section class="home-hero">
+  <div class="hero-copy"><span class="eyebrow"><span class="live-dot"></span> Clínica de Psicologia</span><h1>Mais organização.<br>Mais espaço para <em>cuidar.</em></h1><p>Atendimentos, supervisão e gestão em um só lugar. Uma rotina mais simples para quem faz a diferença.</p><a href="#perfis" class="text-link">Escolha seu espaço <%= icone("seta") %></a></div>
+  <div class="hero-art" aria-hidden="true"><span class="art-orbit orbit-one"></span><span class="art-orbit orbit-two"></span><div class="art-card"><span class="art-card-icon"><%= icone("agenda") %></span><span class="art-label">CUIDADO EM CADA ENCONTRO</span><strong>Uma agenda.<br>Muitas conexões.</strong><div class="art-line"></div><div class="art-people"><span>ψ</span><span><%= icone("pessoas") %></span><span><%= icone("check") %></span><small>Aprender. Acolher. Cuidar.</small></div></div><div class="art-sticker"><%= icone("check") %> Tudo no seu tempo</div></div>
+</section>
+<section id="perfis" class="profiles-section"><div class="section-heading"><div><span class="eyebrow">SEU PRÓXIMO PASSO</span><h2>Como você quer acessar?</h2></div><p>Entre com sua conta institucional.</p></div>
+  <div class="profile-grid">
+    <% [{ perfil: "professor", nome: "Professor", icon: "livro", texto: "Acompanhe seus supervisionados e o progresso dos atendimentos.", detalhe: "SUPERVISÃO E ACOMPANHAMENTO" }, { perfil: "estagiario", nome: "Estudante", icon: "agenda", texto: "Organize sua agenda, marque consultas e acompanhe seus pacientes.", detalhe: "AGENDA E ATENDIMENTOS" }, { perfil: "admin", nome: "Admin", icon: "escudo", texto: "Gerencie professores e mantenha a rotina da clínica organizada.", detalhe: "GESTÃO DA CLÍNICA" }].each do |item| %>
+      <%= link_to new_usuario_session_path(perfil: item[:perfil]), class: "profile-card" do %><span class="profile-icon"><%= icone(item[:icon]) %></span><span class="profile-caption"><%= item[:detalhe] %></span><h3><%= item[:nome] %></h3><p><%= item[:texto] %></p><span class="profile-cta">Acessar como <%= item[:nome].downcase %><%= icone("seta") %></span><% end %>
+    <% end %>
+  </div>
+</section>
+<footer class="public-footer"><span>Clínica-escola de Psicologia · Unilavras</span><span><%= icone("escudo") %> Ambiente restrito à equipe da clínica</span></footer>

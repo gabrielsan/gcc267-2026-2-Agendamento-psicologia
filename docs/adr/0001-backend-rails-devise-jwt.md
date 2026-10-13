@@ -1,6 +1,6 @@
 # ADR 0001: Backend em Rails API com Devise-JWT, STI e Pundit
 
-* Status: Aceito
+* Status: Substituído parcialmente pelo [ADR 0002](0002-aplicacao-rails-unificada.md)
 * Data: 2026-10-07
 
 ## Contexto
