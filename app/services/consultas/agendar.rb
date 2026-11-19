@@ -24,7 +24,10 @@ module Consultas
       conflitos = VerificadorConflito.new(consulta).conflitos
       return Resultado.falha(conflitos, codigo: :conflito_horario, valor: consulta) if conflitos.any?
 
-      Consulta.transaction(requires_new: true) { consulta.save! }
+      Consulta.transaction(requires_new: true) do
+        consulta.save!
+        RegistrarEvento.call(consulta, "consulta.reserva_criada")
+      end
       Resultado.sucesso(consulta)
     rescue ActiveRecord::StatementInvalid => erro
       raise unless erro.cause.is_a?(PG::ExclusionViolation)

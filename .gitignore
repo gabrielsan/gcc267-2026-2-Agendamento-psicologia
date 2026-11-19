@@ -28,3 +28,5 @@
 # Ignore local credentials and database dumps.
 /config/master.key
 *.dump
+/services/triagem/log/
+/services/triagem/tmp/

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_10_07_000003) do
+ActiveRecord::Schema[7.1].define(version: 2026_11_18_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "plpgsql"
@@ -33,7 +33,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_10_07_000003) do
     t.index ["sala", "inicio"], name: "index_consultas_on_sala_and_inicio"
     t.index ["status"], name: "index_consultas_on_status"
     t.check_constraint "fim > inicio", name: "consultas_fim_depois_do_inicio"
-    t.check_constraint "status::text = ANY (ARRAY['agendada'::character varying, 'confirmada'::character varying, 'realizada'::character varying, 'cancelada'::character varying, 'falta'::character varying]::text[])", name: "consultas_status_valido"
+    t.check_constraint "status::text = ANY (ARRAY['agendada'::character varying::text, 'confirmada'::character varying::text, 'realizada'::character varying::text, 'cancelada'::character varying::text, 'falta'::character varying::text])", name: "consultas_status_valido"
     t.exclusion_constraint "estagiario_id WITH =, tsrange(inicio, fim) WITH &&", where: "(status)::text <> 'cancelada'::text", using: :gist, name: "consultas_sem_conflito_estagiario"
     t.exclusion_constraint "sala WITH =, tsrange(inicio, fim) WITH &&", where: "(status)::text <> 'cancelada'::text", using: :gist, name: "consultas_sem_conflito_sala"
   end
@@ -44,6 +44,26 @@ ActiveRecord::Schema[7.1].define(version: 2026_10_07_000003) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["jti"], name: "index_jwt_denylists_on_jti", unique: true
+  end
+
+  create_table "outbox_events", force: :cascade do |t|
+    t.uuid "event_id", null: false
+    t.string "event_type", null: false
+    t.string "consulta_id", null: false
+    t.datetime "occurred_at", null: false
+    t.integer "version", default: 1, null: false
+    t.string "producer", null: false
+    t.jsonb "data", default: {}, null: false
+    t.datetime "published_at"
+    t.datetime "available_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.integer "attempts", default: 0, null: false
+    t.string "last_error"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["available_at", "id"], name: "outbox_pending", where: "(published_at IS NULL)"
+    t.index ["event_id"], name: "index_outbox_events_on_event_id", unique: true
+    t.check_constraint "jsonb_typeof(data) = 'object'::text", name: "outbox_data_object"
+    t.check_constraint "version = 1 AND attempts >= 0", name: "outbox_metadata_valid"
   end
 
   create_table "usuarios", force: :cascade do |t|

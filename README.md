@@ -2,6 +2,16 @@
 
 Aplicação Rails da disciplina GCC267 (2026/2), reunindo a base Hotwire/Tailwind e o backend de agendamentos na raiz do repositório.
 
+## Sprint 2: Infraestrutura e Mensageria
+
+A Parte 2 inclui dois serviços com bancos separados, RabbitMQ, filas duráveis, Outbox transacional e publicadores com retentativa. O serviço de triagem é uma base para a implementação da Parte 3; SAGA, consumidores e read model ainda são trabalhos das outras partes.
+
+```bash
+docker compose up --build -d --wait
+```
+
+Agendamento em `http://localhost:3000/ready`, triagem em `http://localhost:3001/ready` e RabbitMQ em `http://localhost:15672` (login `psiline`, senha `psiline_local`). Guia completo de execução, contratos, testes e integração dos colegas: [Infraestrutura e Mensageria](docs/infraestrutura-mensageria.md).
+
 ## Stack
 
 - Ruby 3.2.3
@@ -9,6 +19,7 @@ Aplicação Rails da disciplina GCC267 (2026/2), reunindo a base Hotwire/Tailwin
 - PostgreSQL
 - Hotwire + Tailwind CSS
 - Devise/JWT + Pundit + Pagy
+- RabbitMQ + Bunny + Outbox transacional
 - RSpec + Factory Bot + Faker + Shoulda Matchers
 - Annotate, somente para models
 - Docker Compose
@@ -21,7 +32,7 @@ docker compose up --build
 
 A aplicação ficará em `http://localhost:3000`.
 
-O serviço `web` prepara o banco, carrega os seeds e compila o Tailwind antes de iniciar. A API está em `/api/v1` e a verificação de saúde em `/up`. As telas Hotwire ainda serão implementadas nesta mesma aplicação.
+O serviço `agendamento-setup` prepara o banco e carrega os seeds; `web` compila o Tailwind e inicia o Rails. A API está em `/api/v1`, a verificação de boot em `/up` e a prontidão com banco em `/ready`. As telas Hotwire ainda serão implementadas nesta mesma aplicação.
 
 ## Acessos de desenvolvimento
 
@@ -87,11 +98,13 @@ bundle exec annotate --models
 - `app/controllers/api/v1` e `app/serializers`: endpoints e respostas JSON.
 - `app/controllers/application_controller.rb` e `app/views`: base HTML para Hotwire, separada dos controllers da API.
 - `spec`: testes de models, services, policies e requests.
+- `shared`: Outbox, transporte RabbitMQ, migrations e tasks compartilhadas.
+- `services/triagem`: aplicação Rails API com banco e Outbox independentes.
 
 Só o admin cria professores e exclui registros. Professores acompanham seus supervisionados; estagiários criam e editam suas consultas em aberto. Usuários com vínculos não podem ser excluídos e podem ser desativados pelo admin. Conflitos de agenda são verificados pelos services e por constraints do PostgreSQL.
 
 - Referência da API e matriz de permissões: [docs/api.md](docs/api.md).
-- Decisão atual de arquitetura: [ADR 0002](docs/adr/0002-aplicacao-rails-unificada.md).
+- Decisão atual de arquitetura: [ADR 0003](docs/adr/0003-outbox-rabbitmq.md).
 
 ## Variáveis de ambiente
 

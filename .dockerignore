@@ -35,3 +35,7 @@
 /app/assets/builds/*
 !/app/assets/builds/.keep
 /public/assets
+
+# The triagem application has its own runtime files.
+/services/triagem/tmp/
+/services/triagem/log/

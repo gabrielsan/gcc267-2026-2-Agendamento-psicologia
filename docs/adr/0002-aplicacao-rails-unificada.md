@@ -1,6 +1,6 @@
 # ADR 0002: Aplicação Rails unificada na raiz
 
-* Status: Aceito
+* Status: Evoluido pelo [ADR 0003](0003-outbox-rabbitmq.md) na Sprint 2; a base Rails unificada permanece como servico de agendamento
 * Data: 2026-10-07
 
 ## Contexto

@@ -49,7 +49,13 @@ module Consultas
         return falha(conflitos, :conflito_horario)
       end
 
-      Consulta.transaction(requires_new: true) { @consulta.save! }
+      Consulta.transaction(requires_new: true) do
+        @consulta.save!
+        if @consulta.saved_change_to_status? && @consulta.status.in?(%w[confirmada cancelada])
+          tipo = @consulta.confirmada? ? "consulta.reserva_confirmada" : "consulta.reserva_cancelada"
+          RegistrarEvento.call(@consulta, tipo)
+        end
+      end
       Resultado.sucesso(@consulta)
     rescue ActiveRecord::StatementInvalid => erro
       raise unless erro.cause.is_a?(PG::ExclusionViolation)

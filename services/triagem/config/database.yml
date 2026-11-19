@@ -1,0 +1,21 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  host: <%= ENV.fetch("DATABASE_HOST", "localhost") %>
+  port: <%= ENV.fetch("DATABASE_PORT", 5433) %>
+  username: <%= ENV.fetch("DATABASE_USER", "triagem") %>
+  password: <%= ENV.fetch("DATABASE_PASSWORD", "triagem") %>
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS", 5) %>
+
+development:
+  <<: *default
+  database: <%= ENV.fetch("DATABASE_NAME", "psiline_triagem_development") %>
+
+test:
+  <<: *default
+  database: <%= ENV.fetch("DATABASE_TEST_NAME", "psiline_triagem_test") %>
+
+production:
+  <<: *default
+  url: <%= ENV["DATABASE_URL"] %>
+  database: <%= ENV.fetch("DATABASE_NAME", "psiline_triagem_production") %>
