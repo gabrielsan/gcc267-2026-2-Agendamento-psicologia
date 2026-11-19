@@ -1,0 +1,21 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  host: <%= ENV.fetch("DATABASE_HOST", "localhost") %>
+  port: <%= ENV.fetch("DATABASE_PORT", 5432) %>
+  username: <%= ENV.fetch("DATABASE_USER") { ENV.fetch("DATABASE_USERNAME", "agendamento_psicologia") } %>
+  password: <%= ENV.fetch("DATABASE_PASSWORD", "agendamento_psicologia") %>
+
+development:
+  <<: *default
+  database: <%= ENV.fetch("DATABASE_NAME", "agendamento_psicologia_unificada_development") %>
+
+test:
+  <<: *default
+  database: <%= ENV.fetch("DATABASE_TEST_NAME", "agendamento_psicologia_unificada_test") %>
+
+production:
+  <<: *default
+  url: <%= ENV["DATABASE_URL"] %>
+  database: <%= ENV.fetch("DATABASE_NAME", "agendamento_psicologia_production") %>

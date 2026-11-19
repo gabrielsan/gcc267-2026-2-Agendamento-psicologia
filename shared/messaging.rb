@@ -1,0 +1,6 @@
+require "bunny"
+require_relative "messaging/outbox_event"
+require_relative "messaging/outbox"
+require_relative "messaging/topology"
+require_relative "messaging/rabbit_publisher"
+require_relative "messaging/publish_pending"

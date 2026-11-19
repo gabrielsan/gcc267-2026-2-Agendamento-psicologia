@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Psiline event envelope v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["event_id", "event_type", "consulta_id", "occurred_at", "version", "producer", "data"],
+  "properties": {
+    "event_id": { "type": "string", "format": "uuid" },
+    "event_type": {
+      "enum": ["consulta.reserva_criada", "triagem.aprovada", "triagem.reprovada", "consulta.reserva_confirmada", "consulta.reserva_cancelada"]
+    },
+    "consulta_id": { "type": "string", "minLength": 1 },
+    "occurred_at": { "type": "string", "format": "date-time" },
+    "version": { "const": 1 },
+    "producer": { "type": "string", "minLength": 1 },
+    "data": { "type": "object" }
+  }
+}
