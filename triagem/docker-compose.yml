@@ -1,0 +1,76 @@
+# Ambiente isolado só da triagem (RabbitMQ + banco + web + consumidor + publicador).
+# Serve para desenvolver e demonstrar a Parte 3 sem depender das outras partes.
+# O compose oficial da Parte 2 deve incorporar estes mesmos serviços.
+x-triagem-env: &triagem_env
+  RAILS_ENV: development
+  DATABASE_HOST: triagem-db
+  DATABASE_USER: triagem
+  DATABASE_PASSWORD: triagem
+  DATABASE_NAME: triagem_development
+  RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
+  LOG_TO_STDOUT: "true"
+
+services:
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    ports:
+      - "5673:5672"
+      - "15673:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 10s
+      retries: 20
+
+  triagem-db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: triagem
+      POSTGRES_PASSWORD: triagem
+      POSTGRES_DB: triagem_development
+    volumes:
+      - triagem_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U triagem -d triagem_development"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  triagem-web:
+    build: .
+    init: true
+    environment: *triagem_env
+    command: bash -lc "rm -f tmp/pids/server.pid && bin/rails db:prepare db:seed && bin/rails server -b 0.0.0.0 -p 3100"
+    ports:
+      - "3100:3100"
+    depends_on:
+      triagem-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs http://localhost:3100/up || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  triagem-consumidor:
+    build: .
+    init: true
+    environment: *triagem_env
+    command: bin/rails triagem:consumidor
+    depends_on:
+      triagem-web:
+        condition: service_healthy
+
+  triagem-publicador:
+    build: .
+    init: true
+    environment: *triagem_env
+    command: bin/rails triagem:publicador
+    depends_on:
+      triagem-web:
+        condition: service_healthy
+
+volumes:
+  triagem_postgres_data:
