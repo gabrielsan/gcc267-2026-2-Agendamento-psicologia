@@ -16,7 +16,7 @@ Authorization: Bearer <token>
 | `DELETE` | `/logout` | — | `204` (o token deixa de valer) |
 | `GET` | `/me` | — | `200` `{ "usuario": {...} }` |
 
-O token expira em `JWT_EXPIRATION_MINUTES` (padrão 8h). O frontend deve ler o header `Authorization` do login (ele é exposto via CORS) e reenviá-lo em todas as chamadas.
+O token expira em `JWT_EXPIRATION_MINUTES` (padrão 8h). Clientes da API devem ler o header `Authorization` do login e reenviá-lo em todas as chamadas. A aplicação unificada serve o frontend na mesma origem e não configura CORS nesta etapa.
 
 ## Erros
 
