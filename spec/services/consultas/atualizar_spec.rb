@@ -1,7 +1,10 @@
 require "rails_helper"
 
 RSpec.describe Consultas::Atualizar do
-  let(:consulta) { create(:consulta) }
+  # Testes de edição cobrem o ciclo pós-triagem: a reserva já chegou a
+  # agendada. O ciclo pendente_triagem -> agendada/cancelada é testado em
+  # Consultas::Saga.
+  let(:consulta) { create(:consulta, status: "agendada") }
   let(:estagiario) { consulta.estagiario }
   let(:professor) { consulta.professor }
   let(:admin) { create(:admin) }

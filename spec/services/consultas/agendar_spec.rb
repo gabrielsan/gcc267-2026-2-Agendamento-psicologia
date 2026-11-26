@@ -7,12 +7,12 @@ RSpec.describe Consultas::Agendar do
     { paciente_nome: "João da Silva", sala: "Sala 1", inicio: inicio, fim: inicio + 50.minutes }
   end
 
-  it "cria a consulta agendada com o supervisor do estagiário" do
+  it "cria a reserva pendente de triagem com o supervisor do estagiário" do
     resultado = described_class.call(estagiario: estagiario, params: params)
 
     expect(resultado).to be_sucesso
     expect(resultado.valor).to be_persisted
-    expect(resultado.valor).to have_attributes(status: "agendada", estagiario: estagiario, professor: estagiario.supervisor)
+    expect(resultado.valor).to have_attributes(status: "pendente_triagem", estagiario: estagiario, professor: estagiario.supervisor)
   end
 
   it "ignora campos que o estagiário não define na criação" do
@@ -20,7 +20,7 @@ RSpec.describe Consultas::Agendar do
     resultado = described_class.call(estagiario: estagiario,
                                      params: params.merge(status: "realizada", estagiario_id: outro.id))
 
-    expect(resultado.valor).to have_attributes(status: "agendada", estagiario_id: estagiario.id)
+    expect(resultado.valor).to have_attributes(status: "pendente_triagem", estagiario_id: estagiario.id)
   end
 
   it "devolve erros de validação" do

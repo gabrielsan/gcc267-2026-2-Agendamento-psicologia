@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_11_18_000001) do
+ActiveRecord::Schema[7.1].define(version: 2026_11_26_000002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "plpgsql"
@@ -24,7 +24,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_11_18_000001) do
     t.datetime "inicio", null: false
     t.datetime "fim", null: false
     t.string "sala", null: false
-    t.string "status", default: "agendada", null: false
+    t.string "status", default: "pendente_triagem", null: false
     t.text "observacoes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -33,7 +33,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_11_18_000001) do
     t.index ["sala", "inicio"], name: "index_consultas_on_sala_and_inicio"
     t.index ["status"], name: "index_consultas_on_status"
     t.check_constraint "fim > inicio", name: "consultas_fim_depois_do_inicio"
-    t.check_constraint "status::text = ANY (ARRAY['agendada'::character varying::text, 'confirmada'::character varying::text, 'realizada'::character varying::text, 'cancelada'::character varying::text, 'falta'::character varying::text])", name: "consultas_status_valido"
+    t.check_constraint "status::text = ANY (ARRAY['pendente_triagem'::text, 'agendada'::text, 'confirmada'::text, 'cancelada'::text, 'falta'::text, 'realizada'::text])", name: "consultas_status_valido"
     t.exclusion_constraint "estagiario_id WITH =, tsrange(inicio, fim) WITH &&", where: "(status)::text <> 'cancelada'::text", using: :gist, name: "consultas_sem_conflito_estagiario"
     t.exclusion_constraint "sala WITH =, tsrange(inicio, fim) WITH &&", where: "(status)::text <> 'cancelada'::text", using: :gist, name: "consultas_sem_conflito_sala"
   end
@@ -64,6 +64,14 @@ ActiveRecord::Schema[7.1].define(version: 2026_11_18_000001) do
     t.index ["event_id"], name: "index_outbox_events_on_event_id", unique: true
     t.check_constraint "jsonb_typeof(data) = 'object'::text", name: "outbox_data_object"
     t.check_constraint "version = 1 AND attempts >= 0", name: "outbox_metadata_valid"
+  end
+
+  create_table "processed_events", force: :cascade do |t|
+    t.uuid "event_id", null: false
+    t.string "event_type", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_id"], name: "index_processed_events_on_event_id", unique: true
   end
 
   create_table "usuarios", force: :cascade do |t|

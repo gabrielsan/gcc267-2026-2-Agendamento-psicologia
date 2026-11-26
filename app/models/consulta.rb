@@ -10,7 +10,7 @@
 #  paciente_nome     :string           not null
 #  paciente_telefone :string
 #  sala              :string           not null
-#  status            :string           default("agendada"), not null
+#  status            :string           default("pendente_triagem"), not null
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
 #  estagiario_id     :bigint           not null
@@ -36,7 +36,12 @@ class Consulta < ApplicationRecord
 
   # Status a partir dos quais cada status pode ser alcançado.
   # realizada, cancelada e falta são finais.
+  #
+  # pendente_triagem é o estado inicial da reserva: a vaga já está ocupada
+  # (conta para conflito de horário), mas só se torna "agendada" quando a
+  # SAGA de triagem aprova, ou "cancelada" (compensação) quando reprova.
   TRANSICOES = {
+    "pendente_triagem" => %w[agendada cancelada],
     "agendada" => %w[confirmada cancelada realizada falta],
     "confirmada" => %w[agendada cancelada realizada falta],
     "realizada" => [],
@@ -51,12 +56,13 @@ class Consulta < ApplicationRecord
   belongs_to :professor, inverse_of: :consultas_supervisionadas
 
   enum :status, {
+    pendente_triagem: "pendente_triagem",
     agendada: "agendada",
     confirmada: "confirmada",
     realizada: "realizada",
     cancelada: "cancelada",
     falta: "falta"
-  }, default: :agendada, validate: true
+  }, default: :pendente_triagem, validate: true
 
   normalizes :sala, with: ->(sala) { sala.squish }
   normalizes :paciente_nome, with: ->(nome) { nome.squish }
@@ -79,7 +85,7 @@ class Consulta < ApplicationRecord
            if: -> { new_record? || will_save_change_to_professor_id? || will_save_change_to_estagiario_id? }
 
   scope :ativas, -> { where.not(status: :cancelada) }
-  scope :em_aberto, -> { where(status: %i[agendada confirmada]) }
+  scope :em_aberto, -> { where(status: %i[pendente_triagem agendada confirmada]) }
   scope :futuras, -> { where(inicio: Time.current..) }
   scope :sobrepostas, ->(inicio, fim) { where("consultas.inicio < ? AND consultas.fim > ?", fim, inicio) }
   scope :entre, ->(de, ate) { where(inicio: de..ate) }
@@ -87,7 +93,7 @@ class Consulta < ApplicationRecord
 
   # Estagiário só altera consultas que ainda não terminaram.
   def em_aberto?
-    agendada? || confirmada?
+    pendente_triagem? || agendada? || confirmada?
   end
 
   def duracao_em_minutos

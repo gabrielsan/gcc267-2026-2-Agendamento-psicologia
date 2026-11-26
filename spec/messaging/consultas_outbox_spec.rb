@@ -28,7 +28,7 @@ RSpec.describe "Transactional consultation events" do
   end
 
   it "emits confirmation and cancellation only for status changes" do
-    consulta = create(:consulta)
+    consulta = create(:consulta, status: "agendada")
     Consultas::Atualizar.call(consulta: consulta, usuario: consulta.professor, params: { status: "confirmada" })
     expect(Messaging::OutboxEvent.last.event_type).to eq("consulta.reserva_confirmada")
     expect {
