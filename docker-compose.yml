@@ -168,6 +168,22 @@ services:
     command: ["bundle", "exec", "rake", "messaging:publish"]
     healthcheck: *worker-health
 
+  agendamento-saga-consumer:
+    <<: *app
+    environment: *agendamento-env
+    depends_on:
+      agendamento-setup:
+        condition: service_completed_successfully
+      messaging-setup:
+        condition: service_completed_successfully
+    command: ["bundle", "exec", "rake", "saga:consumir"]
+    healthcheck:
+      test: ["CMD", "ruby", "-e", "exit(File.exist?('tmp/saga-heartbeat') && Time.now - File.mtime('tmp/saga-heartbeat') < 120 ? 0 : 1)"]
+      interval: 15s
+      timeout: 5s
+      start_period: 30s
+      retries: 3
+
 volumes:
   postgres_data:
   triagem_postgres_data:

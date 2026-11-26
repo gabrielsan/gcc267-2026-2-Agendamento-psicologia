@@ -11,8 +11,8 @@ RSpec.describe Consulta do
   it { is_expected.to allow_value("paciente@email.com").for(:paciente_email) }
   it { is_expected.not_to allow_value("email-invalido").for(:paciente_email) }
 
-  it "começa como agendada" do
-    expect(consulta).to be_agendada
+  it "começa como pendente_triagem" do
+    expect(consulta).to be_pendente_triagem
   end
 
   it "define o professor como o supervisor do estagiário" do
@@ -60,8 +60,27 @@ RSpec.describe Consulta do
     end
   end
 
-  describe "transições de status" do
+  describe "transições de status a partir de pendente_triagem" do
     before { consulta.save! }
+
+    it "permite ir para agendada (triagem aprovada)" do
+      expect(consulta.update(status: :agendada)).to be(true)
+    end
+
+    it "permite ir para cancelada (compensação por triagem reprovada)" do
+      expect(consulta.update(status: :cancelada)).to be(true)
+    end
+
+    it "não permite ir direto para confirmada, realizada ou falta" do
+      %i[confirmada realizada falta].each do |status|
+        consulta.reload
+        expect(consulta.update(status: status)).to be(false)
+      end
+    end
+  end
+
+  describe "transições de status a partir de agendada" do
+    before { consulta.save!; consulta.update!(status: :agendada) }
 
     it "permite agendada -> confirmada -> cancelada" do
       expect(consulta.update(status: :confirmada)).to be(true)

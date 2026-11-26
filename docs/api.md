@@ -133,11 +133,11 @@ POST /api/v1/consultas
 }
 ```
 
-O professor responsável é definido automaticamente (o supervisor do estagiário) e o status inicial é `agendada`.
+O professor responsável é definido automaticamente (o supervisor do estagiário) e o status inicial é `pendente_triagem`: o horário já fica ocupado (conta para conflito), mas a reserva só avança quando a SAGA de triagem decide — ver [Infraestrutura e Mensageria](infraestrutura-mensageria.md) e [ADR 0004](adr/0004-reserva-pendente-triagem-saga.md).
 
 ### Regras de negócio
 
 - Duração entre **30 e 120 minutos**; `fim` deve ser depois de `inicio`; não é possível agendar no passado.
-- **Sem conflitos**: o mesmo estagiário ou a mesma sala não podem ter duas consultas não canceladas sobrepostas. Uma consulta pode começar exatamente quando a outra termina. Consultas canceladas liberam o horário.
-- **Status**: `agendada` ⇄ `confirmada` → `realizada` | `falta` | `cancelada`. Os três últimos são finais. `realizada` e `falta` só podem ser marcados depois do horário de início.
+- **Sem conflitos**: o mesmo estagiário ou a mesma sala não podem ter duas consultas não canceladas sobrepostas. Uma consulta pode começar exatamente quando a outra termina. Consultas canceladas (inclusive por compensação) liberam o horário.
+- **Status**: `pendente_triagem` → `agendada` (triagem aprovada) | `cancelada` (compensação, triagem reprovada); a partir de `agendada`: `agendada` ⇄ `confirmada` → `realizada` | `falta` | `cancelada`. `realizada`, `falta` e `cancelada` são finais. `realizada` e `falta` só podem ser marcados depois do horário de início. A transição `pendente_triagem` → `agendada`/`cancelada` é feita pela SAGA (eventos `triagem.aprovada`/`triagem.reprovada`), não por `PATCH`; o estagiário ainda pode cancelar manualmente uma reserva pendente (ela conta como "em aberto").
 - Se o estagiário trocar de supervisor, as consultas futuras em aberto passam para o novo professor.

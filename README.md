@@ -92,8 +92,9 @@ bundle exec annotate --models
 
 ## Organização
 
-- `app/models`: Usuario (STI), Admin, Professor, Estagiario, Consulta e JwtDenylist.
+- `app/models`: Usuario (STI), Admin, Professor, Estagiario, Consulta, ProcessedEvent e JwtDenylist.
 - `app/services/consultas`: agendamento, atualização, disponibilidade e conflitos.
+- `app/services/consultas/saga`: confirmação e compensação da reserva a partir dos resultados da triagem (`triagem.aprovada`/`triagem.reprovada`), e o consumidor da fila `psiline.agendamento`.
 - `app/policies`: permissões e visibilidade por perfil.
 - `app/controllers/api/v1` e `app/serializers`: endpoints e respostas JSON.
 - `app/controllers/application_controller.rb` e `app/views`: base HTML para Hotwire, separada dos controllers da API.
@@ -103,8 +104,10 @@ bundle exec annotate --models
 
 Só o admin cria professores e exclui registros. Professores acompanham seus supervisionados; estagiários criam e editam suas consultas em aberto. Usuários com vínculos não podem ser excluídos e podem ser desativados pelo admin. Conflitos de agenda são verificados pelos services e por constraints do PostgreSQL.
 
+Uma consulta nasce `pendente_triagem` (o horário já conta como ocupado) e só vira `agendada` ou é compensada para `cancelada` quando o worker `agendamento-saga-consumer` processa o resultado da triagem (`bundle exec rake saga:consumir`, já incluído no `docker compose up`).
+
 - Referência da API e matriz de permissões: [docs/api.md](docs/api.md).
-- Decisão atual de arquitetura: [ADR 0003](docs/adr/0003-outbox-rabbitmq.md).
+- Decisão atual de arquitetura: [ADR 0003](docs/adr/0003-outbox-rabbitmq.md) e [ADR 0004](docs/adr/0004-reserva-pendente-triagem-saga.md).
 
 ## Variáveis de ambiente
 

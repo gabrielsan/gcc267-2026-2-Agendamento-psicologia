@@ -15,7 +15,7 @@ RSpec.describe "Consultas" do
       post "/api/v1/consultas", params: payload.to_json, headers: auth_headers(estagiario)
 
       expect(response).to have_http_status(:created)
-      expect(json["consulta"]).to include("status" => "agendada", "sala" => "Sala 1", "duracao_minutos" => 50)
+      expect(json["consulta"]).to include("status" => "pendente_triagem", "sala" => "Sala 1", "duracao_minutos" => 50)
       expect(json["consulta"]["professor"]["id"]).to eq(professor.id)
       expect(json["consulta"]["paciente"]["nome"]).to eq("João da Silva")
     end
@@ -109,7 +109,9 @@ RSpec.describe "Consultas" do
   end
 
   describe "PATCH /api/v1/consultas/:id" do
-    let(:consulta) { create(:consulta, estagiario: estagiario) }
+    # A edição cobre o ciclo pós-triagem (agendada em diante); a transição
+    # pendente_triagem -> agendada/cancelada é feita pela SAGA, não por PATCH.
+    let(:consulta) { create(:consulta, estagiario: estagiario, status: "agendada") }
 
     def patch_consulta(usuario, dados)
       patch "/api/v1/consultas/#{consulta.id}", params: { consulta: dados }.to_json, headers: auth_headers(usuario)

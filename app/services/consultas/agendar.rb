@@ -1,7 +1,9 @@
 module Consultas
   # Cria uma consulta para um estagiário, aplicando as regras de agendamento:
   # validações do model, professor supervisor definido automaticamente e
-  # verificação de conflito de horário (estagiário e sala).
+  # verificação de conflito de horário (estagiário e sala). A reserva nasce
+  # pendente_triagem: o horário já fica ocupado, mas só vira "agendada" (ou é
+  # compensada para "cancelada") quando a SAGA de triagem decide.
   class Agendar
     CAMPOS = %w[paciente_nome paciente_telefone paciente_email inicio fim sala observacoes].freeze
     ERRO_CONFLITO_CONCORRENTE = "O horário acabou de ser ocupado por outra consulta. Escolha outro horário.".freeze
@@ -17,7 +19,7 @@ module Consultas
 
     def call
       consulta = @estagiario.consultas.build(@params)
-      consulta.status = :agendada
+      consulta.status = :pendente_triagem
 
       return Resultado.falha(consulta.errors.full_messages, valor: consulta) unless consulta.valid?
 
